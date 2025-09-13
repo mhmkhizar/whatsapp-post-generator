@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Post Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css ">
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+      .container {
+        background-color: #1f1f1f;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        width: 100%;
+        margin: 1rem;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+      }
+      input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid #404040;
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+      }
+      input:focus {
+        border-color: #1ce783;
+        box-shadow: 0 0 0 2px rgba(28, 231, 131, 0.2);
+        outline: none;
+      }
+      input:invalid {
+        border-color: #ff4444;
+      }
+      input::placeholder {
+        color: #888;
+      }
+      button {
+        padding: 1rem 1.5rem;
+        background-color: #1ce783;
+        color: #121212;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-top: 0.5rem;
+      }
+      button:hover {
+        background-color: #19d074;
+        transform: translateY(-1px);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+      .result {
+        display: none;
+        background-color: #2d2d2d;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+      }
+      .main-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #404040;
+      }
+      .main-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .main-section-title {
+        font-size: 1.5rem;
+        color: #1ce783;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+      .section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #404040;
+      }
+      .section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .section-title {
+        font-size: 1.25rem;
+        color: #aaaaaa;
+        font-weight: 700;
+      }
+      .copy-btn {
+        background: none;
+        border: none;
+        color: #aaaaaa;
+        padding: 0.5rem;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .copy-btn:hover {
+        color: #1ce783;
+        transform: translateY(0);
+      }
+      .copy-btn i {
+        font-size: 1.125rem;
+      }
+      
+      .wordpress-code {
+        background-color: #1a1a1a;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        white-space: pre-wrap;
+        font-family: monospace;
+        overflow-y: auto;
+        max-height: 200px;
+        max-width: 100%;
+        word-break: break-word;
+      }
+      .wordpress-code::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .wordpress-code::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 4px;
+      }
+      .wordpress-code::-webkit-scrollbar-thumb {
+        background: #1ce783;
+        border-radius: 4px;
+      }
+      .wordpress-code::-webkit-scrollbar-thumb:hover {
+        background: #19d074;
+      }
+      .whatsapp-image {
+        display: block;
+        max-width: 25%;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+      }
+      @media (max-width: 600px) {
+        .container {
+          padding: 1.5rem;
+        }
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>WhatsApp Post Generator</h1>
+      <form id="generatorForm" onsubmit="fetchMovieInfo(event)">
+        <input
+          type="text"
+          id="imdbID"
+          placeholder="Enter IMDb ID (e.g., tt3896198)"
+          required
+          autocomplete="off"
+        />
+        <input
+          type="text"
+          id="dubbedLanguages"
+          placeholder="Enter Language(s)"
+          required
+          autocomplete="on"
+        />
+        <input
+          type="url"
+          id="postLink"
+          placeholder="Enter Post Link"
+          required
+          autocomplete="off"
+        />
+        <button type="submit">Get Post</button>
+      </form>
+    <div class="result" id="result">
+        <div class="main-section">
+          <div class="main-section-title">WhatsApp Post</div>
+          
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">Image</div>
+              <button class="copy-btn" onclick="copyWhatsAppImage()">
+                <i class="fas fa-clipboard"></i>
+              </button>
+            </div>
+            <img id="whatsappImage" class="whatsapp-image" alt="WhatsApp Preview" />
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">Content</div>
+              <button class="copy-btn" onclick="copySection('whatsappContent')">
+                <i class="fas fa-clipboard"></i>
+              </button>
+            </div>
+            <div class="wordpress-code" id="whatsappContent"></div>
+          </div>
+        </div>
+    </div>
+    <script>
+      const apiKey = "5725af9a";
+      async function copyWhatsAppImage() {
+        const img = document.getElementById('whatsappImage');
+        const btn = event.currentTarget;
+        const icon = btn.querySelector('i');
+        
+        const tempImg = new Image();
+        tempImg.crossOrigin = "anonymous";
+        tempImg.src = img.src;
+        
+        tempImg.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          canvas.width = tempImg.width;
+          canvas.height = tempImg.height;
+          
+          ctx.drawImage(tempImg, 0, 0);
+          
+          canvas.toBlob(function(blob) {
+            const item = new ClipboardItem({ "image/png": blob });
+            
+            navigator.clipboard.write([item])
+              .then(() => {
+                icon.classList.replace('fa-clipboard', 'fa-check');
+                setTimeout(() => {
+                  icon.classList.replace('fa-check', 'fa-clipboard');
+                }, 1000);
+              })
+              .catch((err) => {
+                console.error('Failed to copy image:', err);
+                alert('Failed to copy image. Please try again.');
+              });
+          });
+        };
+        
+        tempImg.onerror = function() {
+          console.error('Failed to load image for copying');
+          alert('Failed to load image. Please try again.');
+        };
+      }
+      async function copySection(elementId) {
+        const btn = event.currentTarget;
+        const icon = btn.querySelector('i');
+        const text = document.getElementById(elementId).innerText;
+        
+        try {
+          await navigator.clipboard.writeText(text);
+          icon.classList.replace('fa-clipboard', 'fa-check');
+          setTimeout(() => {
+            icon.classList.replace('fa-check', 'fa-clipboard');
+          }, 1000);
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+        }
+      }
+      
+      function generateWhatsAppContent(data, userLanguages, postLink) {
+        return `💫 *${data.Title} (${data.Year})*
+
+- *Type:* Movie
+- *Language(s):* ${userLanguages}
+- *Genre(s):* ${data.Genre}
+- *IMDb Votes:* ${data.imdbVotes}
+- *IMDb Rating:* ${data.imdbRating}
+
+💫 *Download Now:* ${postLink}`;
+      }
+      function fetchMovieInfo(event) {
+        event.preventDefault();
+        const imdbID = document.getElementById("imdbID").value.trim();
+        const dubbedLanguages = document.getElementById("dubbedLanguages").value.trim();
+        const postLink = document.getElementById("postLink").value.trim();
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "none";
+        fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}&plot=full`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.Response === "False") {
+              alert("Movie not found. Please check the IMDb ID.");
+              return;
+            }
+            
+            const posterUrl1080 = data.Poster !== "N/A" 
+              ? data.Poster.replace(/._V1_SX300\./g, '._V1_SX1080.')
+              : "No URL available";
+            
+            document.getElementById("whatsappImage").src = posterUrl1080;
+            document.getElementById("whatsappContent").innerText = generateWhatsAppContent(data, dubbedLanguages, postLink);
+            resultDiv.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            alert("An error occurred. Please try again later.");
+          });
+      }
+    </script>
+</body>
+</html>
