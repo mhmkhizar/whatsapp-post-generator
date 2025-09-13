@@ -1,1 +1,1 @@
-# whatsapp-post-generator
+# WhatsApp Post Generator
