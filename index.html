@@ -196,8 +196,8 @@
       <form id="generatorForm" onsubmit="fetchMovieInfo(event)">
         <input
           type="text"
-          id="imdbID"
-          placeholder="Enter IMDb ID (e.g., tt3896198)"
+          id="imdbLink"
+          placeholder="Enter IMDb Link"
           required
           autocomplete="off"
         />
@@ -243,6 +243,24 @@
     </div>
     <script>
       const apiKey = "5725af9a";
+      
+      function extractIMDbID(link) {
+        // Extract IMDb ID from various possible IMDb link formats
+        const patterns = [
+          /\/title\/(tt\d+)/,  // Standard format
+          /imdb\.com\/title\/(tt\d+)/,  // With domain
+          /(tt\d+)/  // Just the ID itself
+        ];
+        
+        for (let pattern of patterns) {
+          const match = link.match(pattern);
+          if (match && match[1]) {
+            return match[1];
+          }
+        }
+        return null;
+      }
+      
       async function copyWhatsAppImage() {
         const img = document.getElementById('whatsappImage');
         const btn = event.currentTarget;
@@ -312,16 +330,25 @@
       }
       function fetchMovieInfo(event) {
         event.preventDefault();
-        const imdbID = document.getElementById("imdbID").value.trim();
+        const imdbLink = document.getElementById("imdbLink").value.trim();
         const dubbedLanguages = document.getElementById("dubbedLanguages").value.trim();
         const postLink = document.getElementById("postLink").value.trim();
         const resultDiv = document.getElementById("result");
+        
+        // Extract IMDb ID from the link
+        const imdbID = extractIMDbID(imdbLink);
+        
+        if (!imdbID) {
+          alert("Invalid IMDb link. Please enter a valid IMDb movie link (e.g., https://www.imdb.com/title/tt3896198/)");
+          return;
+        }
+        
         resultDiv.style.display = "none";
         fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}&plot=full`)
           .then((response) => response.json())
           .then((data) => {
             if (data.Response === "False") {
-              alert("Movie not found. Please check the IMDb ID.");
+              alert("Movie not found. Please check the IMDb link.");
               return;
             }
             
